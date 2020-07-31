@@ -2,9 +2,9 @@
 
 namespace App\Slack;
 
+use App\Exceptions\SlackApiError;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * This is a simple client for the Slack API. Authentication is
@@ -29,12 +29,15 @@ class SlackClient
     public function apiTest($error = null, $foo = null)
     {
         $endpoint = static::BASE . 'api.test';
+        $args = [];
 
-        $args = [
-            'error' => $error,
-            'foo' => $foo,
-        ];
+        if ($error) {
+            $args['error'] = $error;
+        }
 
+        if ($foo) {
+            $args['foo'] = $foo;
+        }
 
         return $this->callMethod($endpoint, $args);
     }
@@ -65,8 +68,13 @@ class SlackClient
         ->asForm()
         ->post($endpoint, $args);
 
-        if (! $response->ok() || ! $response['ok']) {
-            return $response->throw();
+        if (! $response->ok() || Arr::get($response, 'ok') != true) {
+            throw new SlackApiError(
+                "Error calling {$endpoint}",
+                Arr::get($response, 'error'),
+                $args,
+                $response->json()
+            );
         }
 
         return $response->json();
