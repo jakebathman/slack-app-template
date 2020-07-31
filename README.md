@@ -39,10 +39,18 @@ With this client is a custom error class at `app/Exceptions/SlackApiError.php`. 
 
 A simple class with only one method to help format URLs in messages. However, this class is a good place to put future general Slack-related helper methods as you build your app.
 
-
 ## Slash commands
 
 For command `/foo`:
 - Route defined in `api.php` as `slack.slash.foo`
-- Hander in `app/Http/Controllers/Slack/SlashCommandController.php@foo`
-- 
+- Handler in `app/Http/Controllers/Slack/SlashCommandController.php@foo`
+
+## Interactivity
+
+- Route defined in `api.php` as `slack.interaction`
+- Handler in `app/Http/Controllers/Slack/InteractionController.php`
+  
+## Events
+
+- Route defined in `api.php` as `slack.event`
+- Handler in `app/Http/Controllers/Slack/EventController.php`
